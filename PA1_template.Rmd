@@ -1,14 +1,8 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
-output:
+output: 
   html_document:
-    theme: flatly
-    toc: true
-    toc_depth: 2
-    toc_float:
-      collapsed: false
-      smooth_scroll: false
-      number_sections: true
+    keep_md: true
 ---
 
 

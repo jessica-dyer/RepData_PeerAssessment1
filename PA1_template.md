@@ -6,7 +6,9 @@ output:
 ---
 
 
-## Loading and preprocessing the data
+## Loading and preprocessing the data  
+1. Load the data (i.e. read.csv())  
+2. Process/transform the data (if necessary) into a format suitable for your analysis  
 
 
 ```r
@@ -15,8 +17,7 @@ output:
 #******************************************************************
 library(tidyverse)
 library(readr)
-library(BiocManager)
-library(impute)
+library(lattice)
 
 # 1. Download data in to data folder (git will ignore this folder)
 if(!file.exists("./data")){dir.create("./data")}
@@ -55,7 +56,9 @@ summary(activity)
 ```
 
 
-## What is mean total number of steps taken per day?
+## What is mean total number of steps taken per day?  
+1. Calculate the total number of steps taken per day
+2. If you do not understand the difference between a histogram and a barplot, research the difference between them. Make a histogram of the total number of steps taken each day
 
 
 ```r
@@ -72,10 +75,12 @@ hist
 
 ![](PA1_template_files/figure-html/histogram-1.png)<!-- -->
 
+3. Calculate and report the mean and median of the total number of steps taken per day  
+
 - The average number of steps taken per day: 
 
 ```r
-mean <- round(mean(hist_data$steps), 2)
+mean <- mean(hist_data$steps)
 mean
 ```
 
@@ -97,7 +102,7 @@ median
 
 ## What is the average daily activity pattern?
 
-- Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)  
+1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)  
 
 
 ```r
@@ -113,7 +118,7 @@ plot(time_data$interval, time_data$steps, type = "l",
 
 ![](PA1_template_files/figure-html/timeseries-1.png)<!-- -->
 
-- Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 ```r
 time_data[which.max(time_data$steps), ]$interval
@@ -135,11 +140,12 @@ nas <- summary[7, 1]
 nas <- str_split(nas, ":", simplify = TRUE)
 nas <- as.numeric(nas[,2])
 ```
-- The only variable with missing values in the original dataset is 'steps'. Within 'steps' there are 2304 missing values. 
+    - The only variable with missing values in the original dataset is 'steps'. Within 'steps' there are 2304 missing values. 
 
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.  
-  - Strategy: If 'steps' is missing, fill that value with the mean for that 5-minute interval. 
-  
+
+    - Strategy: If 'steps' is missing, fill that value with the mean for that 5-minute interval.  
+    
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
 ```r
@@ -156,7 +162,7 @@ for (n in 1:nrow(activity_impute)) {
 }
 ```
 
-4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+4. Make a histogram of the total number of steps taken each day and Calculate and report the **mean** and **median** total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 
 ```r
@@ -164,7 +170,7 @@ hist_data_impute <- aggregate(steps ~ date, data = activity_impute, sum, na.rm =
 
 hist_impute <- ggplot(hist_data_impute, aes(x=steps)) + 
   geom_histogram(fill="#69b3a2", color="#e9ecef", binwidth = 2500) +
-    ggtitle("Distribution of total number of steps taken per day") +
+    ggtitle("Distribution of total number of steps taken per day (imputed missing values)") +
   ylab("Frequency") + 
   xlab("Number of steps")
 
@@ -177,7 +183,12 @@ hist_impute
 
 
 ```r
-mean_imp <- round(mean(hist_data_impute$steps), 2)
+mean_imp <- mean(hist_data_impute$steps)
+mean_imp
+```
+
+```
+## [1] 10766.19
 ```
 
 - The median number of steps taken per day with imputed data: 
@@ -185,7 +196,42 @@ mean_imp <- round(mean(hist_data_impute$steps), 2)
 
 ```r
 median_imp <- median(hist_data_impute$steps)
+median_imp
 ```
-The average number of steps taken per day is 1.076619\times 10^{4} and the median is 1.0766189\times 10^{4}. 
 
-## Are there differences in activity patterns between weekdays and weekends?
+```
+## [1] 10766.19
+```
+
+## Are there differences in activity patterns between weekdays and weekends?  
+
+1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
+
+
+
+```r
+activity_weekdays <- activity
+weekdays <- c("Friday" ,   "Monday", "Thursday", "Tuesday", "Wednesday" )
+
+activity_weekdays$weekend <- c('Weekend', 'Weekday')[(weekdays(activity_weekdays$date) %in% weekdays)+1L]
+
+time_data_weekday <- aggregate(activity_weekdays$steps, by=list(activity_weekdays$interval, 
+                                                                activity_weekdays$weekend), FUN=mean, na.rm=TRUE)
+colnames(time_data_weekday) <- c("interval", "weekday", "steps")
+```
+
+2. Make a panel plot containing a time series plot type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+
+
+```r
+xyplot(steps ~ interval | weekday, data = time_data_weekday,
+      panel = function(x, y, ...){panel.xyplot(x, y, ...)},
+      type="l",
+      xlab="Intervals",
+      ylab="Number of steps",
+      layout=c(1,2)
+      )
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+
