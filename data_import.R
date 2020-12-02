@@ -1,14 +1,3 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
-
-
-## Loading and preprocessing the data
-
-```{r, echo=TRUE}
 #******************************************************************
 #Step 0. Downloading dependencies
 #******************************************************************
@@ -16,6 +5,10 @@ library(tidyverse)
 library(dplyr)
 library(readr)
 library(ggplot2)
+
+#******************************************************************
+#Step 1. Downloading & unzipping data
+#******************************************************************
 # 1. Download data in to data folder (git will ignore this folder)
 if(!file.exists("./data")){dir.create("./data")}
 
@@ -36,36 +29,3 @@ if(!exists("activity")) {
 
 # 3. Format the date variable with as.Date
 activity$date <- as.Date(activity$date, "%Y-%m-%d")
-
-```
-
-
-## What is mean total number of steps taken per day?
-
-```{r}
-hist_data <- aggregate(steps ~ date, data = activity, sum)
-
-hist <- ggplot(hist_data, aes(x=steps)) + 
-  geom_histogram(fill="#69b3a2", color="#e9ecef") +
-    ggtitle("Steps per day")
-hist
-
-```
-
-```{r}
-# mean_steps <- aggregate(activity[, 1], list(activity$date), mean)
-mean <- mean(activity$steps)
-median <- median(activity$steps)
-
-```
-The average number of steps taken per day is {r mean} and the median is {r median}
-
-## What is the average daily activity pattern?
-
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?

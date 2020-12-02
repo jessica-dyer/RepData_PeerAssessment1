@@ -8,11 +8,48 @@ output:
 
 ## Loading and preprocessing the data
 
-```{r, echo=TRUE}
+
+```r
 #******************************************************************
 #Step 0. Downloading dependencies
 #******************************************************************
 library(tidyverse)
+```
+
+```
+## Warning: package 'tidyverse' was built under R version 4.0.3
+```
+
+```
+## -- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+```
+
+```
+## v ggplot2 3.3.2     v purrr   0.3.4
+## v tibble  3.0.4     v dplyr   1.0.2
+## v tidyr   1.1.2     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.0
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 4.0.3
+```
+
+```
+## Warning: package 'tibble' was built under R version 4.0.3
+```
+
+```
+## Warning: package 'forcats' was built under R version 4.0.3
+```
+
+```
+## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+```
+
+```r
 library(dplyr)
 library(readr)
 library(ggplot2)
@@ -36,27 +73,32 @@ if(!exists("activity")) {
 
 # 3. Format the date variable with as.Date
 activity$date <- as.Date(activity$date, "%Y-%m-%d")
-
 ```
 
 
 ## What is mean total number of steps taken per day?
 
-```{r}
+
+```r
 hist_data <- aggregate(steps ~ date, data = activity, sum)
 
 hist <- ggplot(hist_data, aes(x=steps)) + 
   geom_histogram(fill="#69b3a2", color="#e9ecef") +
     ggtitle("Steps per day")
 hist
-
 ```
 
-```{r}
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+
+```r
 # mean_steps <- aggregate(activity[, 1], list(activity$date), mean)
 mean <- mean(activity$steps)
 median <- median(activity$steps)
-
 ```
 The average number of steps taken per day is {r mean} and the median is {r median}
 
